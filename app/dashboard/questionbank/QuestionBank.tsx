@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { createQuestionSet, fetchAllQuestionSets, addQuestionToSet } from "../../../api";
-import type { QuestionSet, Question } from "../../../api";
+import api, { createQuestionSet, fetchAllQuestionSets, addQuestionToSet } from "../../../app/api";
+import type { QuestionSet, Question } from "../../../app/api";
 
 const QuestionBank = () => {
   const [setName, setSetName] = useState<string>("");

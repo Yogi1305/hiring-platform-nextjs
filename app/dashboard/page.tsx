@@ -9,7 +9,7 @@ const sidebarItems = [
   { href: '/dashboard/questionbank', label: 'Question Bank' },
 ];
 
-function Dashboard() {
+function DashboardPage() {
   const linkClass = (isActive: boolean) =>
     `block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
       isActive
@@ -40,4 +40,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default DashboardPage;
