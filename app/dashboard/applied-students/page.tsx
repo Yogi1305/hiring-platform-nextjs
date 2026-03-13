@@ -405,16 +405,16 @@ function AppliedStudents() {
                               </a>
                             )}
 
-                            {
-                              applicant.user.profile?.resumes?.map((resume, idx) => (
-                                <a
-                                  key={idx}
-                                  href={applicant?.user?.profile?.resumes[idx]}
-                                  target="_blank"
-                                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
-                                  >resume</a>))
-                                  
-                            }
+                            {applicant?.user?.profile?.resumes?.map((resume, idx) => (
+  <a
+    key={idx}
+    href={resume}
+    target="_blank"
+    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+  >
+    Resume
+  </a>
+))}
                           </div>
                         </div>
                       </div>

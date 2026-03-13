@@ -244,7 +244,7 @@ export default function Profile() {
     linkedin: "",
     skills: [],
     education: [],
-    resume: [],
+    resumes: [],
     primaryResumeIndex: 0,
     codingProfiles: [],
     experiences: [],
@@ -280,24 +280,38 @@ export default function Profile() {
       const data = response.data
 
       // Some backends use `resumes`, some use `resume`
-      const resumesFromApi: string[] = data.resumes || data.resume || []
+      const resumesFromApi: string[] = data.resumes || []
 
       const nextProfile: UserProfile = {
         github: data.github || "",
         linkedin: data.linkedin || "",
         skills: data.skills || [],
         education: data.education || [],
-        resume: resumesFromApi,
+        resumes: resumesFromApi,
         primaryResumeIndex: data.primaryResumeIndex || 0,
         codingProfiles: data.codingProfiles || [],
         experiences: data.experiences || [],
       }
 
+      const codingProfileUrls = (nextProfile.codingProfiles ?? []).map(
+        (entry) => entry.url
+      )
+      const normalizedExperiences: Experience[] = (nextProfile.experiences ?? []).map(
+        (exp) => ({
+          title: exp.role || "",
+          company: exp.company || "",
+          location: "",
+          startDate: exp.startDate || "",
+          endDate: exp.endDate || "",
+          description: "",
+        })
+      )
+
       setProfile(nextProfile)
       setResumes(resumesFromApi)
       setPrimaryResumeIndex(nextProfile.primaryResumeIndex || 0)
-      setCodingProfiles(nextProfile.codingProfiles || [])
-      setExperiences((nextProfile.experiences as Experience[]) || [])
+      setCodingProfiles(codingProfileUrls)
+      setExperiences(normalizedExperiences)
     } catch (err: unknown) {
       if (err instanceof Error && /401|unauthorized/i.test(err.message)) {
         router.push("/login")
@@ -354,10 +368,24 @@ export default function Profile() {
       } else if (section === "education") {
         updatedProfile = { ...updatedProfile, education: editEducation }
       } else if (section === "coding") {
-        updatedProfile = { ...updatedProfile, codingProfiles: editCodingProfiles }
+        updatedProfile = {
+          ...updatedProfile,
+          codingProfiles: editCodingProfiles.map((url) => ({
+            platform: getCodingPlatformName(url),
+            url,
+          })),
+        }
         setCodingProfiles(editCodingProfiles)
       } else if (section === "experiences") {
-        updatedProfile = { ...updatedProfile, experiences: editExperiences }
+        updatedProfile = {
+          ...updatedProfile,
+          experiences: editExperiences.map((exp) => ({
+            company: exp.company,
+            role: exp.title,
+            startDate: exp.startDate,
+            endDate: exp.endDate,
+          })),
+        }
         setExperiences(editExperiences)
       }
 
@@ -492,7 +520,7 @@ export default function Profile() {
 
       const updatedProfile: UserProfile = {
         ...profile,
-        resume: nextResumes,
+        resumes: nextResumes,
         primaryResumeIndex: nextPrimary,
       }
 
@@ -552,7 +580,7 @@ export default function Profile() {
 
       const updatedProfile: UserProfile = {
         ...profile,
-        resume: nextResumes,
+        resumes: nextResumes,
         primaryResumeIndex: nextPrimary,
       }
 
