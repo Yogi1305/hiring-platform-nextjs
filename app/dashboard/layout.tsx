@@ -20,7 +20,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-800 text-white flex flex-col">
+      {/* <div className="w-64 bg-gray-800 text-white flex flex-col">
         <div className="p-4 text-lg font-bold">Dashboard</div>
         <nav className="flex-1">
           <ul>
@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             ))}
           </ul>
         </nav>
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="flex-1 p-6 bg-gray-100 overflow-auto">{children}</div>
