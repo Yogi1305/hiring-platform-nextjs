@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchAllJobs, toggleJobPublic } from "../api";
-import type { Job } from "../jobs/page.tsx";
+import { fetchAllJobs, toggleJobPublic } from "../../api";
+import type { Job } from "../../jobs/page.tsx";
 
 function DashboardHome() {
   const [jobs, setJobs] = useState<Job[]>([]);

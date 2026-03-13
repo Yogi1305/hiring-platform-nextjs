@@ -228,3 +228,21 @@ export interface UserApplication {
 }
 
 export const getUserApplications = () => api.get<UserApplication[]>('/user/applications')
+
+// Form fields types
+export interface FormField {
+  id: string;
+  label: string;
+  type: any; // 'text' | 'email' | 'number' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'date';
+  required: boolean;
+  placeholder?: string;
+  options?: string[]; // for select fields
+}
+
+export async function createForm(jobId: string, formFields: FormField[]) {
+  const response = await api.post('/forms/create', {
+    jobId,
+    form: { fields: formFields },
+  });
+  return response.data;
+}

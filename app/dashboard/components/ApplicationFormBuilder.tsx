@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '@/app/api';
+import api, { createForm } from '@/app/api';
 
 // Form field types
 const FIELD_TYPES = ['text', 'email', 'number', 'tel', 'textarea', 'select', 'checkbox', 'date'] as const;
@@ -135,23 +135,9 @@ function ApplicationFormBuilder() {
     setSuccess(null)
 
     try {
-      const response = await fetch('/forms/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          jobId: selectedJob.id,
-          form: { fields: formFields },
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save application form');
-      }
-
-      const data = await response.json();
-      console.log('Save Form response:', data);
+      const response = await createForm(selectedJob.id, formFields)
+      
+      console.log('Save Form response:', response);
       setSuccess('Application form saved successfully!');
       setFormFields([])
     } catch (err) {

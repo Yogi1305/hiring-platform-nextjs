@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import DashboardHome from './DashboardHome';
 
 const sidebarItems = [
   {
@@ -77,8 +78,8 @@ const stats = [
     iconBg: 'bg-indigo-50',
     iconColor: 'text-indigo-600',
     iconRing: 'ring-indigo-100',
-    href: '/dashboard/create-job',
-    cta: 'Create Job →',
+    href: '/dashboard/home',
+    cta: 'Created Job →',
   },
   {
     label: 'Applications',
@@ -225,7 +226,7 @@ function DashboardPage() {
         </div>
       </aside>
 
-      {/* ── Main Area ───────────────────────────────────────────── */}
+      {/* ── Main Area ───────────────Active Jobs────────────────────────────── */}
       <div className="flex flex-1 flex-col">
 
         {/* Top bar */}
@@ -376,6 +377,7 @@ function DashboardPage() {
           </div>
 
         </main>
+    
       </div>
     </div>
   )
