@@ -40,6 +40,24 @@ async function request<T = any>(path: string, init: RequestInit = {}): Promise<T
   return data as T
 }
 
+async function uploadFile(file: File): Promise<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch(`${Baseurl}/upload/file`, {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'File upload failed');
+  }
+
+  return res.json();
+}
+
 const api = {
   async get<T = any>(path: string) {
     const data = await request<T>(path, { method: 'GET' })
@@ -53,6 +71,7 @@ const api = {
     const data = await request<T>(path, { method: 'PATCH', body })
     return { data }
   },
+  uploadFile,
 }
 
 export default api
@@ -144,6 +163,9 @@ export interface ApplicantUser {
     github?: string
     linkedin?: string
     skills?: string[]
+    resumes?: string[]
+    codingProfiles?: { platform: string; url: string }[]
+    experiences?: { company: string; role: string; startDate: string; endDate: string }[]
   }
 }
 

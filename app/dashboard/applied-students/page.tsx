@@ -90,6 +90,7 @@ function AppliedStudents() {
       setLoading(true)
       const response = await getCompanyJobsWithApplicants()
       setJobs(response.data.data.jobs)
+      console.log(response.data.data.jobs)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to load jobs')
     } finally {
@@ -403,6 +404,17 @@ function AppliedStudents() {
                                 LinkedIn
                               </a>
                             )}
+
+                            {
+                              applicant.user.profile?.resumes?.map((resume, idx) => (
+                                <a
+                                  key={idx}
+                                  href={applicant?.user?.profile?.resumes[idx]}
+                                  target="_blank"
+                                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+                                  >resume</a>))
+                                  
+                            }
                           </div>
                         </div>
                       </div>
