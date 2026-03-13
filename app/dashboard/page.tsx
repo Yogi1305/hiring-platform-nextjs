@@ -20,7 +20,7 @@ function DashboardPage() {
   return (
     <div className="flex min-h-[calc(100vh-64px)]">
       {/* Sidebar */}
-      <aside className="w-64 shrink-0 border-r border-slate-200 bg-white p-4">
+      {/* <aside className="w-64 shrink-0 border-r border-slate-200 bg-white p-4">
         <h2 className="mb-4 px-4 text-lg font-bold text-slate-900">Menu</h2>
         <nav className="space-y-1">
           {sidebarItems.map((item) => (
@@ -29,7 +29,7 @@ function DashboardPage() {
             </Link>
           ))}
         </nav>
-      </aside>
+      </aside> */}
 
       {/* Main Content */}
       <main className="flex-1 p-6">

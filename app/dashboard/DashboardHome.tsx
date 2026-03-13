@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
-import { fetchAllJobs, toggleJobPublic } from '../../api.jobs';
-import type { Job } from '../Jobs';
+import { fetchAllJobs, toggleJobPublic } from '../api';
+import type { Job } from '../jobs/page.tsx';
 
 function DashboardHome() {
   const [jobs, setJobs] = useState<Job[]>([]);

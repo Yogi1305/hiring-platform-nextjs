@@ -1,3 +1,5 @@
+import { Job } from "./pages/Jobs"
+
 // Minimal fetch-based API wrapper to replace axios usage
 export const Baseurl = 'http://localhost:3001'
 // export const Baseurl = 'https://hireme-backend-1.onrender.com'
@@ -75,7 +77,16 @@ export const addExistingQuestionToTest = async (testId: string, questionId: stri
   const res = await api.post(`/questions/tests/${testId}/add-existing/${questionId}`)
   return res.data
 }
+export const fetchAllJobs = async (): Promise<Job[]> => {
+  const res = await api.get('/jobs/all')
+  return res.data.data || res.data
+}
 
+// Toggle public/private for a job
+export const toggleJobPublic = async (jobId: string) => {
+  const res = await api.post(`/jobs/${jobId}/public`)
+  return res.data
+}
 // Create a QuestionSet
 export const createQuestionSet = async (setName: string) => {
   const res = await api.post('/questionset', { setName })
