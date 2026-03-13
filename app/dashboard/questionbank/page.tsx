@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect } from "react";
 import api, { createQuestionSet, fetchAllQuestionSets, addQuestionToSet } from "@/app/api";
 import type { QuestionSet, Question } from "@/app/api";

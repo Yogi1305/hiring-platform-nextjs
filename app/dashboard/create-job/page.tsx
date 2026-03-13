@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from 'react'
 import CreateJobForm from '../components/CreateJobForm'
 import ApplicationFormBuilder from '../components/ApplicationFormBuilder'

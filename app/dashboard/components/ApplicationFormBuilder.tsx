@@ -1,5 +1,7 @@
+"use client"
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import api from '@/app/api';
 
 // Form field types
 const FIELD_TYPES = ['text', 'email', 'number', 'tel', 'textarea', 'select', 'checkbox', 'date'] as const;
@@ -65,12 +67,9 @@ function ApplicationFormBuilder() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('/jobs/all');
-        if (!response.ok) {
-          throw new Error('Failed to load jobs');
-        }
-        const data = await response.json();
-        setJobs(data.data || []);
+        const { data } = await api.get('/jobs/all'); // Correctly destructure the `data` property
+        setJobs(data.data || []); 
+        // console.log(data)// Ensure `data` is an array
       } catch (err) {
         console.error('Failed to fetch jobs:', err);
         setError('Failed to load jobs');

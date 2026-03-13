@@ -1,12 +1,17 @@
-"use client";
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+'use client'
+
+import { useState } from 'react'
+import type { FormEvent } from 'react'
+
+
+import api from '../api'
+import { useRouter } from 'next/navigation'
 
 type Tab = 'company-register' | 'employee-register' | 'login'
 type LoginType = 'company' | 'employee'
 
 function Employeer() {
-  const router = useRouter();
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<Tab>('company-register')
 
   // Company Register state
@@ -35,109 +40,79 @@ function Employeer() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
-  const handleCompanyRegister = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
+  const handleCompanyRegister = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setLoading(true)
+    setError(null)
+    setSuccess(null)
 
     try {
-      const response = await fetch('/companyowner/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          companyName,
-          email: companyEmail,
-          password: companyPassword,
-          location,
-          industry,
-          website: website || null,
-          phone: phone || null,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Company registration failed');
-      }
-
-      const data = await response.json();
-      console.log('Company Register response:', data);
-      setSuccess('Company registered successfully!');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Company registration failed');
+      const response = await api.post('/companyowner/create', {
+        companyName,
+        email: companyEmail,
+        password: companyPassword,
+        location,
+        industry,
+        website: website || null,
+        phone: phone || null,
+      })
+      console.log('Company Register response:', response.data)
+      setSuccess('Company registered successfully!')
+    } catch (err: unknown) {
+      const message =err instanceof Error ? err.message : 'Company registration failed'
+      setError(message)
     } finally {
-      setLoading(false);
+      setLoading(false)
+    }
+       
+  }
+
+  const handleEmployeeRegister = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setLoading(true)
+    setError(null)
+    setSuccess(null)
+
+    try {
+      const response = await api.post('/employees/create', {
+        name: employeeName,
+        email: employeeEmail,
+        phone: employeePhone,
+        password: employeePassword,
+        companyCode,
+      })
+      console.log('Employee Register response:', response.data)
+      setSuccess('Employee registered successfully!')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message :
+        'Employee registration failed'
+      setError(message)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleEmployeeRegister = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setLoading(true)
+    setError(null)
+    setSuccess(null)
+
+    const endpoint = loginType === 'company' ? '/companyowner/login' : '/employees/login'
 
     try {
-      const response = await fetch('/employees/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: employeeName,
-          email: employeeEmail,
-          phone: employeePhone,
-          password: employeePassword,
-          companyCode,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Employee registration failed');
-      }
-
-      const data = await response.json();
-      console.log('Employee Register response:', data);
-      setSuccess('Employee registered successfully!');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Employee registration failed');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    const endpoint = loginType === 'company' ? '/companyowner/login' : '/employees/login';
-
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: loginEmail,
-          password: loginPassword,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-
-      const data = await response.json();
-      console.log('Login response:', data);
-      setSuccess('Login successful!');
+      const response = await api.post(endpoint, {
+        email: loginEmail,
+        password: loginPassword,
+      })
+      console.log('Login response:', response.data)
+      setSuccess('Login successful!')
       // Redirect to dashboard after successful login
       router.push('/dashboard')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message :
+       'Login failed'
+      setError(message)
     } finally {
       setLoading(false)
     }

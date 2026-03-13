@@ -1,7 +1,7 @@
+"use client"
+import api from '@/app/api'
 import { useState, useEffect } from 'react'
 import type { FormEvent } from 'react'
-import axios from 'axios'
-import api from '../../../api'
 
 interface Job {
   id: string
@@ -99,9 +99,8 @@ function CreateTestForm() {
       setTestTitle('')
       setTestDescription('')
     } catch (err: unknown) {
-      const message = axios.isAxiosError(err) && err.response?.data?.message
-        ? err.response.data.message
-        : 'Failed to create test'
+      const message = err instanceof Error ? err.message : 'Failed to create test'
+       
       setError(message)
     } finally {
       setLoading(false)

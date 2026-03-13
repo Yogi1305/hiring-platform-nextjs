@@ -69,11 +69,11 @@ function Profile() {
       setPrimaryResumeIndex(data.primaryResumeIndex || 0)
       setCodingProfiles(data.codingProfiles || [])
       setExperiences(data.experiences || [])
-    } catch (err: any) {
-      if (err.response?.status === 401) {
+    } catch (err: unknown) {
+      if (err instanceof Error && /401|unauthorized/i.test(err.message)) {
         router.push('/login')
       } else {
-        setError(err.response?.data?.message || 'Failed to load profile')
+        setError(err instanceof Error ? err.message : 'Failed to load profile')
       }
     } finally {
       setLoading(false)
@@ -127,8 +127,8 @@ function Profile() {
       setEditSection(null)
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update profile')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to update profile')
     } finally {
       setSaving(false)
     }

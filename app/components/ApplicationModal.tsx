@@ -73,8 +73,8 @@ function ApplicationModal({ job, isOpen, onClose }: ApplicationModalProps) {
         }
         return [...prev, { questionId, answer }];
       });
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to submit answer. Please try again.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to submit answer. Please try again.");
     } finally {
       setSubmittingAnswer(null);
     }
@@ -117,8 +117,8 @@ function ApplicationModal({ job, isOpen, onClose }: ApplicationModalProps) {
       } else {
         setCurrentStep("success");
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to submit application. Please try again.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to submit application. Please try again.");
     } finally {
       setSubmitting(false);
     }

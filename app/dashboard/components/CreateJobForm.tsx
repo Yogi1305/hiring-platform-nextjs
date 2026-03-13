@@ -1,7 +1,8 @@
+"use client"
+import api from '@/app/api'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import axios from 'axios'
-import api from '../../../api'
+
 
 // Enums matching backend
 const JOB_TYPES = ['remote', 'hybrid', 'onsite'] as const
@@ -66,8 +67,7 @@ function CreateJobForm() {
       setDuration('')
       setLastDateToApply('')
     } catch (err: unknown) {
-      const message = axios.isAxiosError(err) && err.response?.data?.message
-        ? err.response.data.message
+      const message = err instanceof Error ? err.message
         : 'Failed to create job'
       setError(message)
     } finally {

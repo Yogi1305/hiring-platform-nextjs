@@ -1,3 +1,5 @@
+"use client"
+
 import { Applicant, getCompanyJobsWithApplicants, JobWithApplicants, updateApplicationStatus } from '@/app/api'
 import { useState, useEffect } from 'react'
 
@@ -21,8 +23,8 @@ function AppliedStudents() {
       setLoading(true)
       const response = await getCompanyJobsWithApplicants()
       setJobs(response.data.data.jobs)
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load jobs')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to load jobs')
     } finally {
       setLoading(false)
     }
@@ -73,8 +75,8 @@ function AppliedStudents() {
           )
         )
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update status')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to update status')
     } finally {
       setUpdatingStatus(null)
     }

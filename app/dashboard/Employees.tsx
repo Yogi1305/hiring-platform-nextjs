@@ -1,6 +1,8 @@
+"use client"
+
 import { useState, useEffect } from 'react'
-import { getCompanyEmployees } from '../../api'
-import type { Employee } from '../../api'
+import { getCompanyEmployees } from '../api'
+import type { Employee } from '../api'
 
 function Employees() {
   const [employees, setEmployees] = useState<Employee[]>([])
@@ -16,8 +18,8 @@ function Employees() {
       setLoading(true)
       const response = await getCompanyEmployees()
       setEmployees(response.data.data)
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load employees')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to load employees')
     } finally {
       setLoading(false)
     }

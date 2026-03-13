@@ -1,9 +1,9 @@
+"use client"
 import { useState, useEffect } from 'react'
 import type { FormEvent } from 'react'
-import axios from 'axios'
 
-import api from '../../../api'
 import ImportQuestions from './ImportQuestions'
+import api from '@/app/api'
 
 interface Job {
   id: string
@@ -121,8 +121,7 @@ function CreateQuestionForm() {
       setQuestionOptions([])
       setCorrectAnswer('')
     } catch (err: unknown) {
-      const message = axios.isAxiosError(err) && err.response?.data?.message
-        ? err.response.data.message
+      const message = err instanceof Error ? err.message
         : 'Failed to create question'
       setError(message)
     } finally {

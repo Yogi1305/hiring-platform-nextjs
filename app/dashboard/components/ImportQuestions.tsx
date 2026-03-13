@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { fetchAllQuestionSets, addExistingQuestionToTest } from '../../../api';
-import type { QuestionSet } from '../../../api';
+import { fetchAllQuestionSets, addExistingQuestionToTest } from '../../api';
+import type { QuestionSet } from '../../api';
 
 interface ImportQuestionsProps {
   testId: string;
@@ -17,7 +17,7 @@ const ImportQuestions: React.FC<ImportQuestionsProps> = ({ testId }) => {
       try {
         await addExistingQuestionToTest(testId, questionId);
         setAddSuccess('Question added to test!');
-      } catch (err: any) {
+      } catch (err: unknown) {
         setAddError('Failed to add question to test');
       } finally {
         setAddLoading(null);
@@ -36,7 +36,7 @@ const ImportQuestions: React.FC<ImportQuestionsProps> = ({ testId }) => {
       const sets = await fetchAllQuestionSets();
       setQuestionSets(sets);
       setShowSets(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to load question sets');
     } finally {
       setLoading(false);

@@ -24,8 +24,8 @@ function Dashboard() {
         <h2 className="mb-4 px-4 text-lg font-bold text-slate-900">Menu</h2>
         <nav className="space-y-1">
           {sidebarItems.map((item) => (
-            <Link key={item.href} href={item.href} legacyBehavior>
-              <a className={linkClass(false)}>{item.label}</a>
+            <Link key={item.href} href={item.href} className={linkClass(false)}>
+              {item.label}
             </Link>
           ))}
         </nav>
