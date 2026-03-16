@@ -1,8 +1,9 @@
 import { Job } from "./pages/Jobs"
 
 // Minimal fetch-based API wrapper to replace axios usage
+
 // export const Baseurl = 'http://localhost:3001'
-// export const Baseurl = 'https://hireme-i1re.onrender.com'
+export const Baseurl = 'https://hireme-i1re.onrender.com'
 
 async function request<T = any>(path: string, init: RequestInit = {}): Promise<T> {
   const isAbsolute = /^https?:\/\//i.test(path)
