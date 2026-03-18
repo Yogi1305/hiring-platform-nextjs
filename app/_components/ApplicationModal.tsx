@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import api from "../api";
-import type { Job, Question } from "../pages/Jobs";
+import type { Job, Question } from "../_pages/Jobs";
 
 interface ApplicationModalProps {
   job: Job;

@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from 'react'
-import CreateJobForm from '../components/CreateJobForm'
-import ApplicationFormBuilder from '../components/ApplicationFormBuilder'
-import CreateTestForm from '../components/CreateTestForm'
-import CreateQuestionForm from '../components/CreateQuestionForm'
+import CreateJobForm from '../_components/CreateJobForm'
+import ApplicationFormBuilder from '../_components/ApplicationFormBuilder'
+import CreateTestForm from '../_components/CreateTestForm'
+import CreateQuestionForm from '../_components/CreateQuestionForm'
 
 type Tab = 'create-job' | 'application' | 'test' | 'question'
 

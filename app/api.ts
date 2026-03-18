@@ -1,78 +1,34 @@
-import { Job } from "./pages/Jobs"
+import { Job } from "./_pages/Jobs"
+import axios, { type AxiosInstance } from "axios"
 
-// Minimal fetch-based API wrapper to replace axios usage
+// Axios API client
 
 // export const Baseurl = 'http://localhost:3001'
 export const Baseurl = 'https://hireme-i1re.onrender.com'
 
-async function request<T = any>(path: string, init: RequestInit = {}): Promise<T> {
-  const isAbsolute = /^https?:\/\//i.test(path)
-  const url = isAbsolute ? path : `${Baseurl}${path.startsWith('/') ? path : `/${path}`}`
+type ApiClient = AxiosInstance & {
+  uploadFile: (file: File) => Promise<any>
+}
 
-  const headers: Record<string, string> = {
+const api = axios.create({
+  baseURL: Baseurl,
+  withCredentials: true,
+  headers: {
     'Content-Type': 'application/json',
-    ...(init.headers as Record<string, string> | undefined),
-  }
+  },
+}) as ApiClient
 
-  const body = init.body && typeof init.body !== 'string' ? JSON.stringify(init.body) : init.body
+api.uploadFile = async (file: File): Promise<any> => {
+  const formData = new FormData()
+  formData.append('file', file)
 
-  const res = await fetch(url, {
-    ...init,
-    headers,
-    body,
-    credentials: 'include',
+  const response = await api.post('/upload/file', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   })
 
-  if (res.status === 204) return null as unknown as T
-
-  let data: any
-  try {
-    data = await res.json()
-  } catch (err) {
-    if (!res.ok) throw new Error(`Request failed: ${res.status}`)
-    return null as unknown as T
-  }
-
-  if (!res.ok) {
-    const message = data?.message || data || `HTTP ${res.status}`
-    throw new Error(message)
-  }
-
-  return data as T
-}
-
-async function uploadFile(file: File): Promise<any> {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const res = await fetch(`${Baseurl}/upload/file`, {
-    method: 'POST',
-    body: formData,
-    credentials: 'include',
-  });
-
-  if (!res.ok) {
-    const error = await res.text();
-    throw new Error(error || 'File upload failed');
-  }
-
-  return res.json();
-}
-
-const api = {
-  async get<T = any>(path: string) {
-    const data = await request<T>(path, { method: 'GET' })
-    return { data }
-  },
-  async post<T = any>(path: string, body?: any) {
-    const data = await request<T>(path, { method: 'POST', body })
-    return { data }
-  },
-  async patch<T = any>(path: string, body?: any) {
-    const data = await request<T>(path, { method: 'PATCH', body })
-    return { data }
-  },
-  uploadFile,
+  return response.data
 }
 
 export default api

@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import api from '../api'
-import ApplicationModal from '../components/ApplicationModal'
-import JobCard from '../components/JobCard'
+import ApplicationModal from '../_components/ApplicationModal'
+import JobCard from '../_components/JobCard'
 
 export interface FormField {
   id: string

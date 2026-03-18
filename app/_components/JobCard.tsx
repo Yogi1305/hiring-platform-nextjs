@@ -1,4 +1,4 @@
-import type { Job } from '../pages/Jobs'
+import type { Job } from '../_pages/Jobs'
 
 interface JobCardProps {
   job: Job
