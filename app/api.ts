@@ -212,6 +212,30 @@ export const getUserApplications = () => api.get<UserApplication[]>('/user/appli
 
 export const logoutUser = () => api.post('/user/logout')
 
+export interface AppNotification {
+  id: string
+  userId: string
+  companyName: string
+  jobTitle: string
+  status: string
+  isRead: boolean
+  message: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface NotificationsResponse {
+  message: string
+  data: AppNotification[]
+}
+
+export const getMyNotifications = () => api.get<NotificationsResponse>('/notifications/my')
+
+export const markNotificationAsRead = (notificationId: string) =>
+  api.patch(`/notifications/${notificationId}/mark-as-read`)
+
+export const markAllNotificationsAsRead = () => api.patch('/notifications/mark-all-as-read')
+
 // Form fields types
 export interface FormField {
   id: string;

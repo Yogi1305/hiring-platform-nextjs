@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { logoutUser } from '../api'
+import Notification from './Notification'
 
 export default function Navbar() {
   const router = useRouter()
@@ -80,6 +81,11 @@ export default function Navbar() {
           {authMode && (
             <li>
               <Link href="/profile" className={navItemClass('/profile')}>Profile</Link>
+            </li>
+          )}
+          {authMode === 'normal' && (
+            <li>
+              <Notification />
             </li>
           )}
           {authMode ? (
