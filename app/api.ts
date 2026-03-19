@@ -3,8 +3,8 @@ import axios, { type AxiosInstance } from "axios"
 
 // Axios API client
 
-// export const Baseurl = 'http://localhost:3001'
-export const Baseurl = 'https://hireme-i1re.onrender.com'
+export const Baseurl = 'http://localhost:3001'
+// export const Baseurl = 'https://hireme-i1re.onrender.com'
 
 type ApiClient = AxiosInstance & {
   uploadFile: (file: File) => Promise<any>
@@ -129,6 +129,7 @@ export interface ApplicantUser {
 export interface Applicant {
   applicationId: string
   status: string
+  notes?: string
   testScore: string
   correctAnswers: number
   incorrectAnswers: number
@@ -195,6 +196,7 @@ export interface ApplicationJob {
 export interface UserApplication {
   id: string
   status: string
+  notes?: string
   formResponse: Record<string, string>
   testAnswered: boolean
   totalquestions: number

@@ -63,6 +63,9 @@ function Jobs() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [limit, setLimit] = useState(12)
+  const [hasMore, setHasMore] = useState(true)
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -70,12 +73,17 @@ function Jobs() {
 
   useEffect(() => {
     fetchJobs()
-  }, [])
+  }, [currentPage, limit])
 
   const fetchJobs = async () => {
     try {
       setLoading(true)
-      const response = await api.get('/jobs/browse')
+      const response = await api.get('/jobs/browse', {
+        params: {
+          page: currentPage,
+          limit,
+        },
+      })
       const companies = response.data.data
       const allJobs: Job[] = []
       for (const company of companies) {
@@ -93,6 +101,7 @@ function Jobs() {
         }
       }
       setJobs(allJobs)
+      setHasMore(allJobs.length >= limit)
       setError(null)
     } catch (err) {
       setError('Failed to fetch jobs. Please try again later.')
@@ -283,19 +292,46 @@ function Jobs() {
         </div>
 
         {/* ── Results Count ── */}
-        {searchQuery || selectedCategory !== 'All' ? (
-          <p className="mb-5 text-sm text-slate-500">
-            Showing{' '}
-            <span className="font-semibold text-slate-700">{filteredJobs.length}</span>{' '}
-            result{filteredJobs.length !== 1 ? 's' : ''}
-            {searchQuery && (
-              <>
-                {' '}for{' '}
-                <span className="font-semibold text-slate-700">"{searchQuery}"</span>
-              </>
-            )}
-          </p>
-        ) : null}
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {searchQuery || selectedCategory !== 'All' ? (
+            <p className="text-sm text-slate-500">
+              Showing{' '}
+              <span className="font-semibold text-slate-700">{filteredJobs.length}</span>{' '}
+              result{filteredJobs.length !== 1 ? 's' : ''}
+              {searchQuery && (
+                <>
+                  {' '}for{' '}
+                  <span className="font-semibold text-slate-700">"{searchQuery}"</span>
+                </>
+              )}
+            </p>
+          ) : (
+            <p className="text-sm text-slate-500">
+              Page <span className="font-semibold text-slate-700">{currentPage}</span>
+            </p>
+          )}
+
+          <div className="flex items-center gap-2">
+            <label htmlFor="jobs-limit" className="text-xs font-medium text-slate-500">
+              Per page
+            </label>
+            <select
+              id="jobs-limit"
+              value={limit}
+              onChange={(e) => {
+                setCurrentPage(1)
+                setLimit(Number(e.target.value))
+              }}
+              className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs font-medium text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            >
+              {[6, 12, 24, 48].map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         {/* ── Jobs Grid ── */}
         {filteredJobs.length === 0 ? (
@@ -318,10 +354,30 @@ function Jobs() {
             </button>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredJobs.map((job) => (
-              <JobCard key={job.id} job={job} onApply={handleApply} />
-            ))}
+          <div className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filteredJobs.map((job) => (
+                <JobCard key={job.id} job={job} onApply={handleApply} />
+              ))}
+            </div>
+
+            <div className="flex items-center justify-center gap-3">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <span className="text-sm font-semibold text-slate-700">Page {currentPage}</span>
+              <button
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                disabled={!hasMore}
+                className="rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -38,6 +38,7 @@ export default function InterviewedStudentsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
+  const [notesByApplication, setNotesByApplication] = useState<Record<string, string>>({})
   const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set())
 
   useEffect(() => {
@@ -56,6 +57,14 @@ export default function InterviewedStudentsPage() {
           }))
           .filter((job) => job.applicants.length > 0)
         setJobs(filtered)
+        setNotesByApplication(
+          filtered.reduce<Record<string, string>>((acc, job) => {
+            job.applicants.forEach((applicant) => {
+              acc[applicant.applicationId] = applicant.notes || ''
+            })
+            return acc
+          }, {})
+        )
         // Expand all jobs by default
         setExpandedJobs(new Set(filtered.map((j) => j.id)))
       } catch (err: unknown) {
@@ -69,15 +78,15 @@ export default function InterviewedStudentsPage() {
     load()
   }, [])
 
-  const updateStatus = async (applicationId: string, status: string) => {
+  const updateStatus = async (applicationId: string, status: string, notes?: string) => {
     setUpdatingId(applicationId)
     try {
-      await updateApplicationStatus(applicationId, status)
+      await updateApplicationStatus(applicationId, status, notes)
       setJobs((prev) =>
         prev.map((job) => ({
           ...job,
           applicants: job.applicants.map((app) =>
-            app.applicationId === applicationId ? { ...app, status } : app
+            app.applicationId === applicationId ? { ...app, status, notes } : app
           ),
         }))
       )
@@ -316,8 +325,8 @@ export default function InterviewedStudentsPage() {
                               </div>
                             </div>
 
-                            {/* Right side: current status badge + select */}
-                            <div className="flex items-center gap-3">
+                            {/* Right side: current status badge + notes + select */}
+                            <div className="flex flex-1 flex-wrap items-center justify-end gap-3">
                               {/* Current status badge */}
                               <span
                                 className={`hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 sm:inline-flex ${cfg.bg} ${cfg.text} ${cfg.ring}`}
@@ -326,12 +335,30 @@ export default function InterviewedStudentsPage() {
                                 {cfg.label}
                               </span>
 
+                              <input
+                                type="text"
+                                placeholder="Add notes"
+                                value={notesByApplication[applicant.applicationId] ?? ''}
+                                onChange={(e) =>
+                                  setNotesByApplication((prev) => ({
+                                    ...prev,
+                                    [applicant.applicationId]: e.target.value,
+                                  }))
+                                }
+                                disabled={isUpdating}
+                                className="w-full min-w-55 max-w-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 transition focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:opacity-50"
+                              />
+
                               {/* Status dropdown */}
                               <div className="relative">
                                 <select
                                   value={applicant.status.toLowerCase()}
                                   onChange={(e) =>
-                                    updateStatus(applicant.applicationId, e.target.value)
+                                    updateStatus(
+                                      applicant.applicationId,
+                                      e.target.value,
+                                      notesByApplication[applicant.applicationId]?.trim() || undefined
+                                    )
                                   }
                                   disabled={isUpdating}
                                   className="appearance-none rounded-lg border border-slate-200 bg-slate-50 py-2 pl-3 pr-8 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:opacity-50"

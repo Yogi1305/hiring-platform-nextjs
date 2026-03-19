@@ -6,6 +6,7 @@ function AppliedJobs() {
   const [applications, setApplications] = useState<UserApplication[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<'all' | 'selected' | 'rejected'>('all')
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -43,6 +44,8 @@ function AppliedJobs() {
         return 'bg-yellow-100 text-yellow-700 border-yellow-200'
       case 'shortlisted':
         return 'bg-green-100 text-green-700 border-green-200'
+      case 'selected':
+        return 'bg-emerald-100 text-emerald-700 border-emerald-200'
       case 'rejected':
         return 'bg-red-100 text-red-700 border-red-200'
       case 'hired':
@@ -68,6 +71,13 @@ function AppliedJobs() {
         return 'bg-slate-100 text-slate-700'
     }
   }
+
+  const filteredApplications = applications.filter((application) => {
+    if (selectedStatusFilter === 'all') {
+      return true
+    }
+    return application.status.toLowerCase() === selectedStatusFilter
+  })
 
   if (loading) {
     return (
@@ -99,19 +109,48 @@ function AppliedJobs() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">My Applications</h1>
           <p className="mt-2 text-slate-600">Track the status of your job applications</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {[
+              { key: 'all', label: 'All' },
+              { key: 'selected', label: 'Selected' },
+              { key: 'rejected', label: 'Rejected' },
+            ].map((filter) => (
+              <button
+                key={filter.key}
+                onClick={() =>
+                  setSelectedStatusFilter(
+                    filter.key as 'all' | 'selected' | 'rejected'
+                  )
+                }
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                  selectedStatusFilter === filter.key
+                    ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+                    : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {applications.length === 0 ? (
+        {filteredApplications.length === 0 ? (
           <div className="rounded-xl border border-slate-200 bg-white p-12 text-center">
             <svg className="mx-auto h-16 w-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="mt-4 text-lg font-medium text-slate-900">No applications yet</h3>
-            <p className="mt-2 text-slate-500">Start applying to jobs to see them here</p>
+            <h3 className="mt-4 text-lg font-medium text-slate-900">
+              {applications.length === 0 ? 'No applications yet' : 'No matching applications'}
+            </h3>
+            <p className="mt-2 text-slate-500">
+              {applications.length === 0
+                ? 'Start applying to jobs to see them here'
+                : 'Try another filter to view more applications'}
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
-            {applications.map((application) => (
+            {filteredApplications.map((application) => (
               <div
                 key={application.id}
                 className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-indigo-200 hover:shadow-md"
@@ -148,6 +187,15 @@ function AppliedJobs() {
                     <p className="mt-2 line-clamp-2 text-sm text-slate-600">
                       {application.job.description}
                     </p>
+
+                    {application.notes && (
+                      <div className="mt-3 rounded-lg border border-indigo-100 bg-indigo-50 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-indigo-700">
+                          Notes
+                        </p>
+                        <p className="mt-1 text-sm text-indigo-900">{application.notes}</p>
+                      </div>
+                    )}
 
                     <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate-500">
                       <div className="flex items-center gap-1">
