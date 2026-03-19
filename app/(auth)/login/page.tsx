@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
 
 import api from '../../api'
 
@@ -21,11 +22,15 @@ function Login() {
 
     try {
       await api.post('/user/login', { email, password })
+      document.cookie = 'auth_mode=normal; path=/; SameSite=Lax'
+      document.cookie = 'dashboard_lock=; Max-Age=0; path=/; SameSite=Lax'
+      toast.success('Login successful')
       router.push('/')
     } catch (err: any) {
       const message =
         err?.message || err?.response?.data?.message || 'Login failed. Please try again.'
       setError(message)
+      toast.error(message)
     } finally {
       setLoading(false)
     }

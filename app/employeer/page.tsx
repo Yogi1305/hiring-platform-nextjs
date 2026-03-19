@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { toast } from 'react-toastify'
 
 import api from '../api'
 import { useRouter } from 'next/navigation'
@@ -103,10 +104,14 @@ function Employeer() {
       })
       console.log('Login response:', response.data)
       setSuccess('Login successful!')
+      document.cookie = 'auth_mode=company; path=/; SameSite=Lax'
+      document.cookie = 'dashboard_lock=1; path=/; SameSite=Lax'
+      toast.success('Login successful')
       router.push('/dashboard')
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Login failed'
       setError(message)
+      toast.error(message)
     } finally {
       setLoading(false)
     }

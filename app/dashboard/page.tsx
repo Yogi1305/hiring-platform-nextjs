@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { logoutUser } from '../api';
 
 const sidebarItems = [
@@ -181,12 +182,19 @@ function DashboardPage() {
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
+    let requestFailed = false
     try {
       await logoutUser()
+      toast.success('Logged out successfully')
     } catch (error) {
       console.error('Logout request failed:', error)
+      requestFailed = true
     } finally {
       document.cookie = 'dashboard_lock=; Max-Age=0; path=/; SameSite=Lax'
+      document.cookie = 'auth_mode=; Max-Age=0; path=/; SameSite=Lax'
+      if (requestFailed) {
+        toast.error('Logout request failed, but local session was cleared')
+      }
       router.replace('/login')
       setIsLoggingOut(false)
     }
