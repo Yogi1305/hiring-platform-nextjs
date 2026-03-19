@@ -1,5 +1,9 @@
+"use client"
+
 import Link from 'next/link';
-import DashboardHome from './DashboardHome';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { logoutUser } from '../api';
 
 const sidebarItems = [
   {
@@ -172,6 +176,22 @@ const quickActions = [
 ];
 
 function DashboardPage() {
+  const router = useRouter()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await logoutUser()
+    } catch (error) {
+      console.error('Logout request failed:', error)
+    } finally {
+      document.cookie = 'dashboard_lock=; Max-Age=0; path=/; SameSite=Lax'
+      router.replace('/login')
+      setIsLoggingOut(false)
+    }
+  }
+
   return (
     <div className="flex min-h-screen bg-slate-50">
 
@@ -216,7 +236,31 @@ function DashboardPage() {
         </nav>
 
         {/* Sidebar footer */}
-        <div className="border-t border-slate-100 p-4">
+        <div className="border-t border-slate-100 p-4 space-y-3">
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isLoggingOut ? (
+              <>
+                <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Logging out...
+              </>
+            ) : (
+              <>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Logout
+              </>
+            )}
+          </button>
+
           <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-3">
             <p className="text-xs font-semibold text-indigo-700">Need help?</p>
             <p className="mt-0.5 text-xs text-indigo-500">

@@ -210,6 +210,8 @@ export interface UserApplication {
 
 export const getUserApplications = () => api.get<UserApplication[]>('/user/applications')
 
+export const logoutUser = () => api.post('/user/logout')
+
 // Form fields types
 export interface FormField {
   id: string;
