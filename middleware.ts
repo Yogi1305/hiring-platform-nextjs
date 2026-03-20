@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { checkUserAuth } from './app/api'
 
 const DASHBOARD_LOCK_COOKIE = 'dashboard_lock'
 const AUTH_MODE_COOKIE = 'auth_mode'
@@ -13,10 +14,35 @@ const dashboardSegments = new Set([
   'questionbank',
 ])
 
-export function middleware(request: NextRequest) {
+async function checkUserAuthenticated(request: NextRequest) {
+  const cookieHeader = request.headers.get('cookie')
+
+  if (!cookieHeader) {
+    return false
+  }
+
+  try {
+    const response = await checkUserAuth(cookieHeader)
+    return response.data?.success === true
+  } catch {
+    return false
+  }
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isDashboardPath = pathname === '/dashboard' || pathname.startsWith('/dashboard/')
   const authMode = request.cookies.get(AUTH_MODE_COOKIE)?.value
+
+  if (isDashboardPath) {
+    const isAuthenticated = await checkUserAuthenticated(request)
+
+    if (!isAuthenticated) {
+      const redirectUrl = request.nextUrl.clone()
+      redirectUrl.pathname = '/login'
+      return NextResponse.redirect(redirectUrl)
+    }
+  }
 
   // Force dashboard child pages to always stay under /dashboard/*
   const [, firstSegment, ...restSegments] = pathname.split('/')

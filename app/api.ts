@@ -1,4 +1,4 @@
-import { Job } from "./_pages/Jobs"
+import type { Job } from "./_pages/Jobs"
 import axios, { type AxiosInstance } from "axios"
 
 // Axios API client
@@ -209,6 +209,14 @@ export interface UserApplication {
 }
 
 export const getUserApplications = () => api.get<UserApplication[]>('/user/applications')
+
+export interface CheckAuthResponse {
+  message: string
+  success: boolean
+}
+
+export const checkUserAuth = (cookieHeader?: string) =>
+  api.get<CheckAuthResponse>('/user/check-auth', cookieHeader ? { headers: { cookie: cookieHeader } } : undefined)
 
 export const logoutUser = () => api.post('/user/logout')
 
