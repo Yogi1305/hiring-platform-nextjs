@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-import api from '../api'
+import api, { checkUserAuth } from '../api'
 import ApplicationModal from '../_components/ApplicationModal'
 import JobCard from '../_components/JobCard'
 
@@ -111,7 +111,28 @@ function Jobs() {
     }
   }
 
-  const handleApply = (job: Job) => {
+  const handleApply = async (job: Job) => {
+    const authMode = document.cookie
+      .split('; ')
+      .find((cookieRow) => cookieRow.startsWith('auth_mode='))
+      ?.split('=')[1]
+
+    if (authMode !== 'normal') {
+      navigate.push('/login')
+      return
+    }
+
+    try {
+      const response = await checkUserAuth()
+      if (!response.data?.success) {
+        navigate.push('/login')
+        return
+      }
+    } catch {
+      navigate.push('/login')
+      return
+    }
+
     setSelectedJob(job)
     setIsModalOpen(true)
   }
